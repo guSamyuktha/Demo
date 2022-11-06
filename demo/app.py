@@ -38,3 +38,19 @@ def register():
     
     return render_template('login.html', msg="Data saved successfuly..Please login using your details")
 
+@app.route('/login',methods=['POST'])
+def login():
+  
+    email = request.form['email']
+    password = request.form['password']
+
+    sql = "SELECT * FROM register WHERE email =? AND password=?"
+    stmt = ibm_db.prepare(conn, sql)
+    ibm_db.bind_param(stmt,1,email)
+    ibm_db.bind_param(stmt,2,password)
+    ibm_db.execute(stmt)
+    account = ibm_db.fetch_assoc(stmt)
+    if account:
+            return render_template('home.html') 
+    else:
+        return render_template('login.html', msg="Login unsuccessful. Incorrect username / password !") 
